@@ -1,5 +1,5 @@
 <package>
-  <name>topic_tools</name>
+  <name>topic_tools_dqn</name>
   <version>1.14.10</version>
   <description>
     Tools for directing, throttling, selecting, and otherwise messing with

@@ -37,7 +37,7 @@
 #include <deque>
 #include "topic_tools/shape_shifter.h"
 #include "topic_tools/parse.h"
-
+#include <std_msgs/Int32.h>
 using std::string;
 using std::vector;
 using std::deque;
@@ -51,8 +51,11 @@ double g_window = 1.0; // 1 second window for starters
 bool g_advertised = false;
 string g_output_topic;
 string g_input_topic;
+string g_period_topic;
 ros::Publisher g_pub;
 ros::Subscriber* g_sub;
+ros::Subscriber* g_period_sub;
+
 bool g_use_messages;
 ros::Time g_last_time;
 bool g_use_wallclock;
@@ -72,10 +75,13 @@ deque<Sent> g_sent;
 
 void conn_cb(const ros::SingleSubscriberPublisher&);
 void in_cb(const ros::MessageEvent<ShapeShifter>& msg_event);
+void period_cb(const std_msgs::Int32::ConstPtr &g_period_rate);
 
 void subscribe()
 {
   g_sub = new ros::Subscriber(g_node->subscribe(g_input_topic, 10, &in_cb, g_th));
+  g_period_sub = new ros::Subscriber(g_node->subscribe(g_period_topic,4,&period_cb, g_th));
+
 }
 
 void conn_cb(const ros::SingleSubscriberPublisher&)
@@ -102,6 +108,10 @@ bool is_latching(const boost::shared_ptr<const ros::M_string>& connection_header
   }
 
   return false;
+}
+
+void period_cb( const std_msgs::Int32::ConstPtr &g_period_rate){
+  g_period = ros::Duration(1.0000/(g_period_rate->data));
 }
 
 void in_cb(const ros::MessageEvent<ShapeShifter>& msg_event)
@@ -187,7 +197,7 @@ int main(int argc, char **argv)
   }
 
   g_input_topic = string(argv[2]);
-
+  g_period_topic = "yolo_fps";
   std::string topic_name;
   if(!getBaseName(string(argv[2]), topic_name))
     return 1;

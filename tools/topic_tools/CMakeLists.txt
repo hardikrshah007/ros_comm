@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(topic_tools)
+project(topic_tools_dqn)
 
 if(NOT WIN32)
   set_directory_properties(PROPERTIES COMPILE_OPTIONS "-Wall;-Wextra")
